@@ -1,5 +1,5 @@
-from Animal import Animal
-from config import GAME, STATE
+from src.Animal import Animal
+from src.config import GAME, STATE
 import pygame
 
 black_color = (0, 0, 0)

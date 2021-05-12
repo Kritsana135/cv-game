@@ -1,6 +1,6 @@
 from random import randint, choice
 import pygame
-from config import GAME
+from src.config import GAME
 
 
 def randomVector(WIDTH, HEIGHT, OBJECT_SIZE, BOUND):
@@ -25,4 +25,3 @@ def centerText(text, screen, color=(0, 0, 0)):
     winTextRect = winText.get_rect(
         center=(GAME['WIDTH']/2, GAME['HEIGHT']/2))
     screen.blit(winText, winTextRect)
-

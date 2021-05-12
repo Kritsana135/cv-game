@@ -1,6 +1,6 @@
 import pygame
 from os import path
-from Utils import randomVector, randomDirection
+from src.Utils import randomVector, randomDirection
 
 
 class Animal:

@@ -1,6 +1,6 @@
-from config import GAME, STATE
+from src.config import STATE
 import pygame
-from Game import Game
+from src.Game import Game
 
 
 class HitBallGame:
@@ -51,4 +51,4 @@ class HitBallGame:
 
 
 if __name__ == "__main__":
-    HitBallGame(maxPoint=2,between=80).start()
+    HitBallGame(maxPoint=2, between=80).start()
