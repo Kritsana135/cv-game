@@ -1,11 +1,12 @@
-from random import randint, choice
+from random import randint, choice, shuffle
 import pygame
 from src.config import GAME
+import os
 
 
 def randomVector(WIDTH, HEIGHT, OBJECT_SIZE, BOUND):
-    x = randint(BOUND, (WIDTH-OBJECT_SIZE)+BOUND)
-    y = randint(0, (HEIGHT-OBJECT_SIZE))
+    x = randint(BOUND, (WIDTH-OBJECT_SIZE[0])+BOUND)
+    y = randint(0, (HEIGHT-OBJECT_SIZE[1]))
     direction = choice([1, -1])
     return (x, y, direction)
 
@@ -25,3 +26,12 @@ def centerText(text, screen, color=(0, 0, 0)):
     winTextRect = winText.get_rect(
         center=(GAME['WIDTH']/2, GAME['HEIGHT']/2))
     screen.blit(winText, winTextRect)
+
+
+def listImages():
+    filenames = []
+    for root, dirs, files in os.walk("./assets/images"):
+        for filename in files:
+            filenames.append(filename)
+    shuffle(filenames)
+    return filenames
