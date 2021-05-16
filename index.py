@@ -4,6 +4,7 @@ from queue import Queue
 import cv2
 import imutils
 import math
+import time
 
 
 def load_vdo(path_vdo):
@@ -33,26 +34,52 @@ class screenSize:
     w = 0
     hr = 0
     wr = 0
+    wrL = 0
+    wrR = 0
     halfL = 0
     halfR = 0
+    half = 0
     r = 0
-
-    def __init__(self, h, w, r, half):
+    rSize = 0
+    sizeW = 0
+    sizeH = 0
+    
+    def __init__(self,h,w,r,Size):
+        dist = 0
         self.h = h
         self.w = w
         self.r = r
         self.hr = int(h/r)
         self.wr = int(w/r)
-        self.halfL = int(self.wr*half)
-        self.halfR = int(self.wr*(half+1))
-
+        self.rSize = int(self.wr*Size)
+        self.half = int(w/2)
+        self.wrL = int(self.half-self.rSize-dist)
+        self.wrR = int(self.half+self.rSize+dist)
+        
+        
+        self.halfL = int(self.half-dist)
+        self.halfR = int(self.half+dist)
+        
+        self.sizeW = int(self.halfL - self.wrL)
+        self.sizeH = int(self.hr * (r-2))
+        
+        
     def printData(self):
-        print("Width X : ", self.w)
-        print("Height Y : ", self.h)
-        print("1 / ", self.r, " Width  : ", self.wr)
-        print("1 / ", self.r, " Height : ", self.hr)
-        print("Half Left : ", self.halfL)
-        print("Half Right : ", self.halfR)
+        print("Width X : ",self.w)
+        print("Height Y : ",self.h)
+        print("1 / ",self.r ," Width  : ",self.wr)
+        print("1 / ",self.r ," Height : ",self.hr)
+        print("Half Left : ",self.halfL)
+        print("Half Right : ",self.halfR)
+        
+        print("Size WH : ",self.sizeW, " : ",self.sizeH)
+        
+    def setDist(self,dist):
+        self.wrL = int(self.half-self.rSize-dist)
+        self.wrR = int(self.half+self.rSize+dist)
+        
+        self.halfL = int(self.half-dist)
+        self.halfR = int(self.half+dist)
 
 
 class position:
@@ -64,6 +91,10 @@ class position:
 
     def setY(self, y):
         self.y = y
+        
+        
+def nothing(x) :
+    pass
 
 
 video = './videos/2ball3.mp4'
@@ -100,21 +131,29 @@ if (cap.isOpened() == False):
 
 ret, first_frame = cap.read()
 
-screen = screenSize(int(cap.get(4)), int(cap.get(3)), 9, 4)
-
-# Create Game class
-game = HitBallGame(maxPoint=5, between=screen.halfR-screen.halfL,
-                   screenHeight=screen.h-(screen.hr*2), screenWidth=screen.w-(screen.wr*2))
+screen = screenSize(int(cap.get(4)),int(cap.get(3)),9,3)
 
 screen.printData()
+
+
+# Create Game class
+game = HitBallGame(maxPoint=5, between=50,
+                   screenHeight=screen.sizeH, screenWidth=(screen.sizeW*2)+50)
+
 
 left_pos = position()
 right_pos = position()
 
+starting_time = time.time()
+
 font = cv2.FONT_HERSHEY_PLAIN
 
 
+
 def loop_cv(out_q):
+    cv2.namedWindow("trackbar")
+    cv2.createTrackbar("bar", "trackbar", 10, screen.w-screen.wrR-10, nothing)
+    frame_id = 0
     while(cap.isOpened()):
         ret, frame = cap.read()
         # out_q.put((1, 1, "CENTER"))
@@ -122,14 +161,17 @@ def loop_cv(out_q):
         if ret == True:
 
             # Press Q on keyboard to  exit
-            key = cv2.waitKey(60)
+            key = cv2.waitKey(30)
             if key == ord('q'):
                 break
 
-            frame_L = frame[screen.hr:screen.h -
-                            screen.hr, screen.wr:screen.halfL]
-            frame_R = frame[screen.hr:screen.h - screen.hr,
-                            screen.halfR:screen.w - screen.wr]
+            frame_id += 1
+
+            num = cv2.getTrackbarPos("bar", "trackbar")
+            screen.setDist(num)
+            
+            frame_L = frame[screen.hr:screen.h - screen.hr, screen.wrL:screen.halfL]
+            frame_R = frame[screen.hr:screen.h - screen.hr, screen.halfR:screen.wrR]
 
             ######################################################################
             # L
@@ -226,23 +268,24 @@ def loop_cv(out_q):
 
             ######################################################################
             thickness = 2
-
-            cv2.rectangle(frame, (screen.wr, screen.hr), (screen.halfL,
-                                                          screen.h - screen.hr), (0, 0, 255), thickness)
-
-            cv2.rectangle(frame, (screen.halfR, screen.hr), (screen.w -
-                                                             screen.wr, screen.h - screen.hr), (0, 255, 255), thickness)
-
-            cv2.imshow('L', frame_L)
-            cv2.imshow('R', frame_R)
-            cv2.imshow("image", frame)
+            
+            cv2.rectangle(frame, (screen.wrL,screen.hr), (screen.halfL,screen.h - screen.hr), (0, 0, 255), thickness)
+            
+            cv2.rectangle(frame, (screen.halfR,screen.hr), (screen.wrR,screen.h - screen.hr), (0, 255, 255), thickness)
+           
+            # cv2.imshow('L', frame_L)
+            # cv2.imshow('R', frame_R)
+            elapsed_time = time.time() - starting_time
+            fps = frame_id / elapsed_time
+            cv2.putText(frame, "FPS: " + str(fps), (10,screen.h-20), font, 1.5, (0,255,0), 2) 
+            cv2.imshow("trackbar", frame)
             # game.start()
 
         else:
             break
 
 
-cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
 
 
 if __name__ == '__main__':

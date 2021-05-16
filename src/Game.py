@@ -2,6 +2,7 @@ from src.Animal import Animal
 from src.config import GAME, STATE
 import pygame
 from src.Utils import listImages
+from time import sleep
 
 black_color = (0, 0, 0)
 font_name = 'Comic Sans MS'
@@ -47,33 +48,34 @@ class Game:
                 self.screen.blit(myfont.render(
                     ('Point : ' + str(self.points[index])), False, black_color), (obj.bound+15, 15))
         if(self.currentStat == STATE['WIN']):
-            myfont = pygame.font.SysFont(font_name, 80)
+            myfont = pygame.font.SysFont(font_name, 30)
             winText = myfont.render(
                 'Player '+str(self.win+1) + ' Win', False, black_color)
             winTextRect = winText.get_rect(
-                center=(GAME['WIDTH']/2, GAME['HEIGHT']/2))
+                center=( self.resolution[0]/2, self.resolution[1]/2))
             self.screen.blit(winText, winTextRect)
             newGame = myfont.render(
                 'Hit Ball to New Game', False, black_color)
             newGameRect = newGame.get_rect(
-                center=(GAME['WIDTH']/2, GAME['HEIGHT']/2 + 90))
+                center=( self.resolution[0]/2, self.resolution[1]/2 + 90))
             self.screen.blit(newGame, newGameRect)
         if(self.currentStat == STATE['INIT']):
-            myfont = pygame.font.SysFont(font_name, 80)
+            myfont = pygame.font.SysFont(font_name, 30)
             newGame = myfont.render(
                 'Hit Ball to Start Game', False, black_color)
             newGameRect = newGame.get_rect(
-                center=(GAME['WIDTH']/2, GAME['HEIGHT']/2))
+                center=(self.resolution[0]/2, self.resolution[1]/2))
             self.screen.blit(newGame, newGameRect)
 
     def hitAnimal(self, index):
         print("hit Animal")
         del self.animals[index][0]
-        self.Objs[index].rePosition(self.animals[index][0])
         self.points[index] = self.points[index] + 1
         if(self.points[index] >= self.maxPoint):
             self.currentStat = STATE['WIN']
             self.win = index
+        self.Objs[index].rePosition(self.animals[index][0])
+        
 
     def newGame(self):
         print('newGame')

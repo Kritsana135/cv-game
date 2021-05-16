@@ -4,7 +4,7 @@ from src.Game import Game
 
 
 class HitBallGame:
-    def __init__(self, delay=10, maxPoint=10, screenWidth=800, screenHeight=600, between=20):
+    def __init__(self,  maxPoint, screenWidth, screenHeight, between, delay=10):
         self.delay = delay
         pygame.init()
         self.resolution = (screenWidth, screenHeight)
@@ -29,17 +29,18 @@ class HitBallGame:
         # Did the user click the window close button?
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    self.running = False
-                # if event.type == pygame.MOUSEBUTTONDOWN:
-                #     if(self.game.currentStat == STATE['WIN'] or self.game.currentStat == STATE['INIT']):
-                #         self.game.newGame()
-                #     if(self.game.currentStat == STATE['START']):
-                #         mX, mY = event.pos
-                #         for index, obj in enumerate(self.game.Objs):
-                #             oX = obj.pX
-                #             oY = obj.pY
-                #             if (mX >= oX and mX <= oX + obj.size[0] and mY >= oY and mY <= oY + obj.size[1]):
-                #                 self.game.hitAnimal(index)
+                    pygame.quit()
+                    exit()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    if(self.game.currentStat == STATE['WIN'] or self.game.currentStat == STATE['INIT']):
+                        self.game.newGame()
+                    if(self.game.currentStat == STATE['START']):
+                        mX, mY = event.pos
+                        for index, obj in enumerate(self.game.Objs):
+                            oX = obj.pX
+                            oY = obj.pY
+                            if (mX >= oX and mX <= oX + obj.size[0] and mY >= oY and mY <= oY + obj.size[1]):
+                                self.game.hitAnimal(index)
 
             self.game.start()
 
