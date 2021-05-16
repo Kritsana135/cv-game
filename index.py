@@ -104,7 +104,7 @@ screen = screenSize(int(cap.get(4)), int(cap.get(3)), 9, 4)
 
 # Create Game class
 game = HitBallGame(maxPoint=5, between=screen.halfR-screen.halfL,
-                   screenHeight=screen.h, screenWidth=screen.w)
+                   screenHeight=screen.h-(screen.hr*2), screenWidth=screen.w-(screen.wr*2))
 
 screen.printData()
 
