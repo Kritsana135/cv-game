@@ -1,3 +1,4 @@
+import sys
 from src.config import STATE
 import pygame
 from src.Game import Game
@@ -51,6 +52,7 @@ class HitBallGame:
 
         # Done! Time to quit.
         pygame.quit()
+        sys.exit()
 
     def event(self, q):
         while True:

@@ -5,6 +5,7 @@ import cv2
 import imutils
 import math
 import time
+import sys
 
 
 def load_vdo(path_vdo):
@@ -43,8 +44,8 @@ class screenSize:
     rSize = 0
     sizeW = 0
     sizeH = 0
-    
-    def __init__(self,h,w,r,Size):
+
+    def __init__(self, h, w, r, Size):
         dist = 0
         self.h = h
         self.w = w
@@ -55,29 +56,27 @@ class screenSize:
         self.half = int(w/2)
         self.wrL = int(self.half-self.rSize-dist)
         self.wrR = int(self.half+self.rSize+dist)
-        
-        
+
         self.halfL = int(self.half-dist)
         self.halfR = int(self.half+dist)
-        
+
         self.sizeW = int(self.halfL - self.wrL)
         self.sizeH = int(self.hr * (r-2))
-        
-        
+
     def printData(self):
-        print("Width X : ",self.w)
-        print("Height Y : ",self.h)
-        print("1 / ",self.r ," Width  : ",self.wr)
-        print("1 / ",self.r ," Height : ",self.hr)
-        print("Half Left : ",self.halfL)
-        print("Half Right : ",self.halfR)
-        
-        print("Size WH : ",self.sizeW, " : ",self.sizeH)
-        
-    def setDist(self,dist):
+        print("Width X : ", self.w)
+        print("Height Y : ", self.h)
+        print("1 / ", self.r, " Width  : ", self.wr)
+        print("1 / ", self.r, " Height : ", self.hr)
+        print("Half Left : ", self.halfL)
+        print("Half Right : ", self.halfR)
+
+        print("Size WH : ", self.sizeW, " : ", self.sizeH)
+
+    def setDist(self, dist):
         self.wrL = int(self.half-self.rSize-dist)
         self.wrR = int(self.half+self.rSize+dist)
-        
+
         self.halfL = int(self.half-dist)
         self.halfR = int(self.half+dist)
 
@@ -91,9 +90,9 @@ class position:
 
     def setY(self, y):
         self.y = y
-        
-        
-def nothing(x) :
+
+
+def nothing(x):
     pass
 
 
@@ -131,7 +130,7 @@ if (cap.isOpened() == False):
 
 ret, first_frame = cap.read()
 
-screen = screenSize(int(cap.get(4)),int(cap.get(3)),9,3)
+screen = screenSize(int(cap.get(4)), int(cap.get(3)), 9, 3)
 
 screen.printData()
 
@@ -147,7 +146,6 @@ right_pos = position()
 starting_time = time.time()
 
 font = cv2.FONT_HERSHEY_PLAIN
-
 
 
 def loop_cv(out_q):
@@ -169,9 +167,11 @@ def loop_cv(out_q):
 
             num = cv2.getTrackbarPos("bar", "trackbar")
             screen.setDist(num)
-            
-            frame_L = frame[screen.hr:screen.h - screen.hr, screen.wrL:screen.halfL]
-            frame_R = frame[screen.hr:screen.h - screen.hr, screen.halfR:screen.wrR]
+
+            frame_L = frame[screen.hr:screen.h -
+                            screen.hr, screen.wrL:screen.halfL]
+            frame_R = frame[screen.hr:screen.h -
+                            screen.hr, screen.halfR:screen.wrR]
 
             ######################################################################
             # L
@@ -268,24 +268,27 @@ def loop_cv(out_q):
 
             ######################################################################
             thickness = 2
-            
-            cv2.rectangle(frame, (screen.wrL,screen.hr), (screen.halfL,screen.h - screen.hr), (0, 0, 255), thickness)
-            
-            cv2.rectangle(frame, (screen.halfR,screen.hr), (screen.wrR,screen.h - screen.hr), (0, 255, 255), thickness)
-           
+
+            cv2.rectangle(frame, (screen.wrL, screen.hr), (screen.halfL,
+                          screen.h - screen.hr), (0, 0, 255), thickness)
+
+            cv2.rectangle(frame, (screen.halfR, screen.hr), (screen.wrR,
+                          screen.h - screen.hr), (0, 255, 255), thickness)
+
             # cv2.imshow('L', frame_L)
             # cv2.imshow('R', frame_R)
             elapsed_time = time.time() - starting_time
             fps = frame_id / elapsed_time
-            cv2.putText(frame, "FPS: " + str(fps), (10,screen.h-20), font, 1.5, (0,255,0), 2) 
+            cv2.putText(frame, "FPS: " + str(fps),
+                        (10, screen.h-20), font, 1.5, (0, 255, 0), 2)
             cv2.imshow("trackbar", frame)
             # game.start()
 
         else:
             break
 
-
     cv2.destroyAllWindows()
+    sys.exit()
 
 
 if __name__ == '__main__':
