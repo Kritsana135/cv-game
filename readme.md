@@ -7,5 +7,3 @@ Create the environment from the environment.yml file:
 Active environment
     
     conda activate GAME
-
-#

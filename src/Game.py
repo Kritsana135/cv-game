@@ -28,6 +28,7 @@ class Game:
         self.currentStat = STATE['INIT']
         self.win = 3
 
+
     def start(self):
         if(self.currentStat == STATE['START']):
             # draw line center canvas

@@ -29,6 +29,9 @@ dependencies:
   - zlib=1.2.11=h7b6447c_3
   - zstd=1.4.9=haebb681_0
   - pip:
+    - imutils==0.5.4
+    - numpy==1.18.5
+    - opencv-python==4.4.0.42
     - pip==20.3.4
     - pygame==2.0.1
 prefix: /home/kritsana135/anaconda3/envs/GAME
