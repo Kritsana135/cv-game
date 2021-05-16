@@ -13,6 +13,7 @@ class Animal:
         self.height = height
         self.bound = bound
         self.sX, self.sY = randomDirection()
+        self.die = False
 
     def loadImg(self, obj_name):
         img = pygame.image.load(path.join("./assets/images/", obj_name))

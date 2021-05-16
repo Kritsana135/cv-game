@@ -1,3 +1,4 @@
+from threading import Thread
 from src.Animal import Animal
 from src.config import GAME, STATE
 import pygame
@@ -29,7 +30,6 @@ class Game:
         self.currentStat = STATE['INIT']
         self.win = 3
 
-
     def start(self):
         if(self.currentStat == STATE['START']):
             # draw line center canvas
@@ -44,7 +44,8 @@ class Game:
 
             myfont = pygame.font.SysFont(font_name, 30)
             for index, obj in enumerate(self.Objs):
-                obj.updatePosition()
+                if(obj.die == False):
+                    obj.updatePosition()
                 self.screen.blit(myfont.render(
                     ('Point : ' + str(self.points[index])), False, black_color), (obj.bound+15, 15))
         if(self.currentStat == STATE['WIN']):
@@ -52,12 +53,12 @@ class Game:
             winText = myfont.render(
                 'Player '+str(self.win+1) + ' Win', False, black_color)
             winTextRect = winText.get_rect(
-                center=( self.resolution[0]/2, self.resolution[1]/2))
+                center=(self.resolution[0]/2, self.resolution[1]/2))
             self.screen.blit(winText, winTextRect)
             newGame = myfont.render(
                 'Hit Ball to New Game', False, black_color)
             newGameRect = newGame.get_rect(
-                center=( self.resolution[0]/2, self.resolution[1]/2 + 90))
+                center=(self.resolution[0]/2, self.resolution[1]/2 + 90))
             self.screen.blit(newGame, newGameRect)
         if(self.currentStat == STATE['INIT']):
             myfont = pygame.font.SysFont(font_name, 30)
@@ -70,12 +71,18 @@ class Game:
     def hitAnimal(self, index):
         print("hit Animal")
         del self.animals[index][0]
+        # self.Objs[index].rePosition(self.animals[index][0])
+        Thread(target=self.slowBorn, args=(index, )).start()
         self.points[index] = self.points[index] + 1
         if(self.points[index] >= self.maxPoint):
             self.currentStat = STATE['WIN']
             self.win = index
+
+    def slowBorn(self, index):
+        self.Objs[index].die = True
+        sleep(1)
         self.Objs[index].rePosition(self.animals[index][0])
-        
+        self.Objs[index].die = False
 
     def newGame(self):
         print('newGame')
